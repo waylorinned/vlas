@@ -3,19 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Влад Тапалка</title>
+  <title>бог влад</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+
     * {
       box-sizing: border-box;
       user-select: none;
       -webkit-user-select: none;
       margin: 0;
       padding: 0;
+      font-family: 'Montserrat', sans-serif;
     }
 
     body {
-      background: radial-gradient(circle, #1a1a2e 0%, #0f0f1b 100%);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: #fff;
       display: flex;
       flex-direction: column;
@@ -25,269 +26,517 @@
       padding: 20px;
     }
 
-    .header {
+    /* Динамический размытый фон */
+    #bg-blur {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background-size: cover;
+      background-position: center;
+      filter: blur(25px) brightness(0.25);
+      z-index: -1;
+      transition: background-image 1s ease-in-out;
+      transform: scale(1.1); /* Убирает белые края от блюра */
+    }
+
+    .header-glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 20px 30px;
       text-align: center;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
       margin-bottom: 20px;
     }
 
-    .title {
-      font-size: 28px;
-      font-weight: 800;
-      color: #f39c12;
-      text-shadow: 0 0 10px rgba(243, 156, 18, 0.4);
+    .level-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #00f2fe;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
     }
 
     .score-container {
-      font-size: 38px;
-      font-weight: bold;
-      margin-top: 5px;
-      letter-spacing: 1px;
+      font-size: 48px;
+      font-weight: 900;
+      background: linear-gradient(90deg, #fdfbfb 0%, #ebedee 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
     }
 
     .stats {
       font-size: 14px;
-      color: #aaa;
-      margin-top: 4px;
+      color: #ccc;
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 15px;
+    }
+
+    /* Энергия */
+    .energy-wrapper {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      height: 24px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .energy-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff0844 0%, #ffb199 100%);
+      width: 100%;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 15px rgba(255, 8, 68, 0.6);
+    }
+
+    .energy-text {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px black;
     }
 
     /* Кликерная зона */
     .tap-area {
       position: relative;
-      margin: 20px 0;
+      margin: 30px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .vlad-avatar {
-      width: 170px;
-      height: 170px;
+      width: 250px;
+      height: 250px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #ff7675, #d63031);
-      border: 5px solid #fdcb6e;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 25px rgba(253, 203, 110, 0.3);
+      object-fit: cover;
+      border: 6px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 40px rgba(0, 242, 254, 0.4);
       cursor: pointer;
-      transition: transform 0.08s ease, filter 0.08s ease;
+      transition: transform 0.05s ease, box-shadow 0.1s ease;
     }
 
     .vlad-avatar:active {
-      transform: scale(0.92);
-      filter: brightness(1.15);
+      transform: scale(0.9);
+      box-shadow: 0 0 60px rgba(0, 242, 254, 0.8);
     }
 
-    .vlad-face {
-      font-size: 60px;
-    }
-
-    .vlad-name {
-      font-size: 15px;
-      font-weight: bold;
-      margin-top: -6px;
-      letter-spacing: 1px;
-    }
-
-    /* Всплывающие цифры */
-    .floating-text {
-      position: absolute;
-      font-size: 24px;
-      font-weight: bold;
-      color: #ffeaa7;
-      pointer-events: none;
-      animation: floatUp 0.7s ease-out forwards;
-    }
-
-    @keyframes floatUp {
-      0% {
-        opacity: 1;
-        transform: translate(-50%, 0) scale(1);
-      }
-      100% {
-        opacity: 0;
-        transform: translate(-50%, -60px) scale(1.3);
-      }
-    }
-
-    /* Магазин улучшений */
-    .shop {
-      width: 100%;
-      max-width: 360px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .upgrade-btn {
-      background: #252836;
-      border: 1px solid #3b3f54;
-      border-radius: 12px;
-      padding: 12px 16px;
-      color: #fff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      transition: background 0.2s, border-color 0.2s, opacity 0.2s;
-    }
-
-    .upgrade-btn:hover:not(:disabled) {
-      background: #2e3244;
-      border-color: #f39c12;
-    }
-
-    .upgrade-btn:disabled {
-      opacity: 0.45;
+    .vlad-avatar.no-energy {
+      filter: grayscale(100%) brightness(0.5);
       cursor: not-allowed;
     }
 
-    .up-info {
-      text-align: left;
+    /* Всплывающий текст */
+    .floating-text {
+      position: absolute;
+      font-size: 28px;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.8);
+      pointer-events: none;
+      animation: floatUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      z-index: 10;
     }
 
-    .up-name {
+    .floating-text.error {
+      color: #ff4757;
+      font-size: 20px;
+      text-shadow: 0px 0px 10px rgba(255, 71, 87, 0.8);
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -100px) scale(1.5); }
+    }
+
+    /* Магазин */
+    .shop-container {
+      width: 100%;
+      max-width: 800px;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .shop-title {
+      font-size: 22px;
       font-weight: bold;
-      font-size: 15px;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #4facfe;
     }
 
-    .up-desc {
-      font-size: 12px;
-      color: #8b8ea0;
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 15px;
+      max-height: 50vh;
+      overflow-y: auto;
+      padding-right: 10px;
     }
 
-    .up-cost {
-      font-weight: bold;
-      color: #fdcb6e;
-      font-size: 14px;
+    /* Стилизация скроллбара */
+    .shop-grid::-webkit-scrollbar { width: 8px; }
+    .shop-grid::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+    .shop-grid::-webkit-scrollbar-thumb { background: #4facfe; border-radius: 10px; }
+
+    .upgrade-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      cursor: pointer;
     }
+
+    .upgrade-card:hover:not(.disabled) {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #00f2fe;
+      transform: translateY(-2px);
+    }
+
+    .upgrade-card.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      filter: grayscale(100%);
+    }
+
+    .up-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .up-name { font-weight: bold; font-size: 14px; color: #fff; }
+    .up-lvl { font-size: 12px; color: #00f2fe; font-weight: 900; background: rgba(0, 242, 254, 0.1); padding: 2px 6px; border-radius: 5px;}
+    .up-desc { font-size: 12px; color: #aaa; margin-bottom: 12px; flex-grow: 1; }
+    
+    .up-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.3);
+      padding: 8px;
+      border-radius: 10px;
+    }
+
+    .up-cost { font-weight: bold; color: #f1c40f; font-size: 14px; }
+    .up-effect { font-size: 12px; color: #2ecc71; font-weight: bold; }
+
+    /* Значки категорий */
+    .type-click .up-name::before { content: "👆 "; }
+    .type-auto .up-name::before { content: "🤖 "; }
+    .type-maxEnergy .up-name::before { content: "🔋 "; }
+    .type-energyRegen .up-name::before { content: "⚡ "; }
+
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="title">VLAD TAP</div>
+  <div id="bg-blur"></div>
+
+  <div class="header-glass">
+    <div class="level-title" id="level-title">Ур. 1: Лысый Влад</div>
     <div class="score-container" id="score">0</div>
     <div class="stats">
-      За клик: +<span id="per-click">1</span> | Автокликер: <span id="auto-rate">0</span>/сек
+      <div>Сила клика: <span id="stat-click">1</span></div>
+      <div>Авто-фарм: <span id="stat-auto">0</span>/сек</div>
+    </div>
+    <div class="energy-wrapper">
+      <div class="energy-fill" id="energy-fill"></div>
+      <div class="energy-text" id="energy-text">100 / 100</div>
     </div>
   </div>
 
   <div class="tap-area" id="tap-area">
-    <div class="vlad-avatar" id="vlad-btn">
-      <div class="vlad-face">😎</div>
-      <div class="vlad-name">ВЛАД</div>
+    <!-- Изначально загружается Лысый Влад (vlad1) -->
+    <img src="vlad1.jpg" class="vlad-avatar" id="vlad-img" draggable="false">
+  </div>
+
+  <div class="shop-container">
+    <div class="shop-title">Супер-Магазин (50 улучшений)</div>
+    <div class="shop-grid" id="shop-grid">
+      <!-- Улучшения генерируются через JS -->
     </div>
   </div>
 
-  <div class="shop">
-    <button class="upgrade-btn" id="btn-click-up" onclick="buyClickUpgrade()">
-      <div class="up-info">
-        <div class="up-name">Мощный Тап</div>
-        <div class="up-desc">+1 к силе клика</div>
-      </div>
-      <div class="up-cost" id="click-cost">15 🪙</div>
-    </button>
-
-    <button class="upgrade-btn" id="btn-bot-1" onclick="buyAutoClicker(1, 50, 1)">
-      <div class="up-info">
-        <div class="up-name">Кореш Влада</div>
-        <div class="up-desc">+1 монета в секунду</div>
-      </div>
-      <div class="up-cost" id="bot1-cost">50 🪙</div>
-    </button>
-
-    <button class="upgrade-btn" id="btn-bot-2" onclick="buyAutoClicker(2, 250, 8)">
-      <div class="up-info">
-        <div class="up-name">Монтажер роликов</div>
-        <div class="up-desc">+8 монет в секунду</div>
-      </div>
-      <div class="up-cost" id="bot2-cost">250 🪙</div>
-    </button>
-
-    <button class="upgrade-btn" id="btn-bot-3" onclick="buyAutoClicker(3, 1000, 40)">
-      <div class="up-info">
-        <div class="up-name">Студия контента</div>
-        <div class="up-desc">+40 монет в секунду</div>
-      </div>
-      <div class="up-cost" id="bot3-cost">1000 🪙</div>
-    </button>
-  </div>
-
   <script>
-    let score = 0;
-    let clickPower = 1;
-    let autoIncome = 0;
+    // --- ИГРОВЫЕ ПЕРЕМЕННЫЕ ---
+    let gameState = {
+      score: 0,
+      clickPower: 1,
+      autoIncome: 0,
+      energy: 100,
+      maxEnergy: 100,
+      energyRegen: 1 // в секунду
+    };
 
-    let clickCost = 15;
-    let botCosts = { 1: 50, 2: 250, 3: 1000 };
+    // --- БАЗА УЛУЧШЕНИЙ (50 ШТУК) ---
+    const upgradesData = [
+      // КЛИКИ (15)
+      { id: 'c1', name: 'Уверенный тык', desc: 'Разминка перед игрой', baseCost: 10, effect: 1, type: 'click' },
+      { id: 'c2', name: 'Мышка за 100 руб', desc: 'Дешево, но работает', baseCost: 50, effect: 3, type: 'click' },
+      { id: 'c3', name: 'Коврик для мыши', desc: 'Скользит лучше', baseCost: 150, effect: 5, type: 'click' },
+      { id: 'c4', name: 'Игровая мышь RGB', desc: 'Светится, значит быстрее', baseCost: 500, effect: 12, type: 'click' },
+      { id: 'c5', name: 'Механическая клава', desc: 'Громкий щелчок!', baseCost: 1500, effect: 30, type: 'click' },
+      { id: 'c6', name: 'Клик с разворота', desc: 'Опасно для монитора', baseCost: 4000, effect: 80, type: 'click' },
+      { id: 'c7', name: 'Турбо-палец', desc: 'Палец тренирован годами', baseCost: 10000, effect: 200, type: 'click' },
+      { id: 'c8', name: 'Кибер-имплант', desc: 'Железный палец 2077', baseCost: 25000, effect: 500, type: 'click' },
+      { id: 'c9', name: 'Сила 100 школьников', desc: 'Массовый удар', baseCost: 60000, effect: 1200, type: 'click' },
+      { id: 'c10', name: 'Удар титана', desc: 'Земля дрожит', baseCost: 150000, effect: 3000, type: 'click' },
+      { id: 'c11', name: 'Тап бесконечности', desc: 'Щелчок Таноса', baseCost: 500000, effect: 8000, type: 'click' },
+      { id: 'c12', name: 'Золотой палец', desc: 'Превращает всё в монеты', baseCost: 1500000, effect: 20000, type: 'click' },
+      { id: 'c13', name: 'Квантовый клик', desc: 'Клик до того, как нажал', baseCost: 5000000, effect: 60000, type: 'click' },
+      { id: 'c14', name: 'Удар Чака Норриса', desc: 'Без комментариев', baseCost: 15000000, effect: 150000, type: 'click' },
+      { id: 'c15', name: 'Божественное касание', desc: 'Финальный удар', baseCost: 50000000, effect: 500000, type: 'click' },
 
+      // АВТОФАРМ (15)
+      { id: 'a1', name: 'Младший брат', desc: 'Кликает за конфеты', baseCost: 50, effect: 1, type: 'auto' },
+      { id: 'a2', name: 'Сосед по парте', desc: 'Помогает на уроке', baseCost: 200, effect: 4, type: 'auto' },
+      { id: 'a3', name: 'Скрипт на Python', desc: 'print("Farm")', baseCost: 800, effect: 15, type: 'auto' },
+      { id: 'a4', name: 'Старый телефон', desc: 'Ферма на подоконнике', baseCost: 2500, effect: 40, type: 'auto' },
+      { id: 'a5', name: 'Школьный сервер', desc: 'Взломал информатичку', baseCost: 8000, effect: 100, type: 'auto' },
+      { id: 'a6', name: 'Майнинг-ферма', desc: 'Гудит в гараже', baseCost: 20000, effect: 250, type: 'auto' },
+      { id: 'a7', name: 'Наемный хакер', desc: 'Фармит удаленно', baseCost: 60000, effect: 800, type: 'auto' },
+      { id: 'a8', name: 'Скрытый майнер', desc: 'Установлен в Minecraft', baseCost: 150000, effect: 2000, type: 'auto' },
+      { id: 'a9', name: 'Ботнет', desc: '100 000 зараженных ПК', baseCost: 400000, effect: 5000, type: 'auto' },
+      { id: 'a10', name: 'Реклама у блогера', desc: 'Подписчики фармят тебе', baseCost: 1200000, effect: 15000, type: 'auto' },
+      { id: 'a11', name: 'Завод тапов', desc: 'Индустриальная революция', baseCost: 4000000, effect: 40000, type: 'auto' },
+      { id: 'a12', name: 'ИИ-генератор монет', desc: 'Нейросеть Влада', baseCost: 10000000, effect: 100000, type: 'auto' },
+      { id: 'a13', name: 'Матрица Влада', desc: 'Все люди фармят тебе', baseCost: 30000000, effect: 300000, type: 'auto' },
+      { id: 'a14', name: 'Сфера Дайсона', desc: 'Энергия целой звезды', baseCost: 100000000, effect: 1000000, type: 'auto' },
+      { id: 'a15', name: 'Сингулярность', desc: 'Автофарм ломает время', baseCost: 500000000, effect: 5000000, type: 'auto' },
+
+      // МАКС ЭНЕРГИЯ (10)
+      { id: 'm1', name: 'Сытный завтрак', desc: 'Бутерброд с сыром', baseCost: 30, effect: 20, type: 'maxEnergy' },
+      { id: 'm2', name: 'Школьная пицца', desc: 'Добавляет сил', baseCost: 150, effect: 50, type: 'maxEnergy' },
+      { id: 'm3', name: 'Сок "Добрый"', desc: 'Пол-литра энергии', baseCost: 600, effect: 100, type: 'maxEnergy' },
+      { id: 'm4', name: 'Энергетик Flash', desc: 'Мотор стучит', baseCost: 2000, effect: 250, type: 'maxEnergy' },
+      { id: 'm5', name: 'Энергетик Red Bull', desc: 'Окрыляяяет!', baseCost: 8000, effect: 600, type: 'maxEnergy' },
+      { id: 'm6', name: 'Протеиновый батончик', desc: 'Для мышц пальцев', baseCost: 30000, effect: 1500, type: 'maxEnergy' },
+      { id: 'm7', name: 'Кофе Эспрессо', desc: 'Глаза не закрываются', baseCost: 100000, effect: 4000, type: 'maxEnergy' },
+      { id: 'm8', name: 'Тройной Эспрессо', desc: 'Сердце выпрыгивает', baseCost: 500000, effect: 10000, type: 'maxEnergy' },
+      { id: 'm9', name: 'Зелье бодрости', desc: 'Сварено в котле', baseCost: 2000000, effect: 25000, type: 'maxEnergy' },
+      { id: 'm10', name: 'Сердце дракона', desc: 'Безграничный резерв', baseCost: 10000000, effect: 100000, type: 'maxEnergy' },
+
+      // РЕГЕН ЭНЕРГИИ (10)
+      { id: 'r1', name: 'Короткий отдых', desc: '5 минут на перемене', baseCost: 40, effect: 1, type: 'energyRegen' },
+      { id: 'r2', name: 'Сон на уроке', desc: 'Учитель не видит', baseCost: 250, effect: 3, type: 'energyRegen' },
+      { id: 'r3', name: 'Прогул школы', desc: 'Восстановление дома', baseCost: 1000, effect: 8, type: 'energyRegen' },
+      { id: 'r4', name: 'Здоровый сон', desc: 'Целых 8 часов!', baseCost: 5000, effect: 20, type: 'energyRegen' },
+      { id: 'r5', name: 'Медитация', desc: 'Ом-м-м-м...', baseCost: 25000, effect: 50, type: 'energyRegen' },
+      { id: 'r6', name: 'Массаж рук', desc: 'Кровь циркулирует', baseCost: 100000, effect: 150, type: 'energyRegen' },
+      { id: 'r7', name: 'Капельница с кофе', desc: 'Прямо в вену', baseCost: 400000, effect: 500, type: 'energyRegen' },
+      { id: 'r8', name: 'Кибер-легкие', desc: 'Дыхание машины', baseCost: 2000000, effect: 2000, type: 'energyRegen' },
+      { id: 'r9', name: 'Солнечные батареи', desc: 'Питание от света', baseCost: 10000000, effect: 8000, type: 'energyRegen' },
+      { id: 'r10', name: 'Термоядерный реактор', desc: 'Бесконечный реген', baseCost: 50000000, effect: 25000, type: 'energyRegen' },
+    ];
+
+    let playerUpgrades = {}; // Хранит уровень купленных улучшений (id: level)
+    upgradesData.forEach(up => playerUpgrades[up.id] = 0);
+
+    // --- DOM ЭЛЕМЕНТЫ ---
     const scoreEl = document.getElementById('score');
-    const perClickEl = document.getElementById('per-click');
-    const autoRateEl = document.getElementById('auto-rate');
+    const statClickEl = document.getElementById('stat-click');
+    const statAutoEl = document.getElementById('stat-auto');
+    const energyFillEl = document.getElementById('energy-fill');
+    const energyTextEl = document.getElementById('energy-text');
+    const vladImg = document.getElementById('vlad-img');
     const tapArea = document.getElementById('tap-area');
-    const vladBtn = document.getElementById('vlad-btn');
+    const levelTitleEl = document.getElementById('level-title');
+    const bgBlurEl = document.getElementById('bg-blur');
+    const shopGrid = document.getElementById('shop-grid');
 
-    // Клик по Владу
-    vladBtn.addEventListener('pointerdown', (e) => {
-      score += clickPower;
+    // --- ФУНКЦИИ ИГРЫ ---
+
+    function initShop() {
+      shopGrid.innerHTML = '';
+      upgradesData.forEach(up => {
+        const level = playerUpgrades[up.id];
+        const cost = Math.floor(up.baseCost * Math.pow(1.5, level));
+        
+        let effectText = '';
+        if (up.type === 'click') effectText = `+${up.effect} к клику`;
+        if (up.type === 'auto') effectText = `+${up.effect}/сек`;
+        if (up.type === 'maxEnergy') effectText = `+${up.effect} макс. энерг.`;
+        if (up.type === 'energyRegen') effectText = `+${up.effect} реген/сек`;
+
+        const card = document.createElement('div');
+        card.className = `upgrade-card type-${up.type}`;
+        card.id = `card-${up.id}`;
+        card.onclick = () => buyUpgrade(up.id);
+
+        card.innerHTML = `
+          <div class="up-header">
+            <span class="up-name">${up.name}</span>
+            <span class="up-lvl">Ур. ${level}</span>
+          </div>
+          <div class="up-desc">${up.desc}</div>
+          <div class="up-footer">
+            <span class="up-cost" id="cost-${up.id}">${cost} 🪙</span>
+            <span class="up-effect">${effectText}</span>
+          </div>
+        `;
+        shopGrid.appendChild(card);
+      });
+      checkShopButtons();
+    }
+
+    function buyUpgrade(id) {
+      const up = upgradesData.find(u => u.id === id);
+      const level = playerUpgrades[id];
+      const cost = Math.floor(up.baseCost * Math.pow(1.5, level));
+
+      if (gameState.score >= cost) {
+        gameState.score -= cost;
+        playerUpgrades[id]++;
+
+        // Применяем эффект
+        if (up.type === 'click') gameState.clickPower += up.effect;
+        if (up.type === 'auto') gameState.autoIncome += up.effect;
+        if (up.type === 'maxEnergy') {
+          gameState.maxEnergy += up.effect;
+          gameState.energy += up.effect; // Лечим при улучшении
+        }
+        if (up.type === 'energyRegen') gameState.energyRegen += up.effect;
+
+        updateUI();
+        initShop(); // Перерисовываем магазин (обновление цен и уровней)
+      }
+    }
+
+    function checkShopButtons() {
+      upgradesData.forEach(up => {
+        const level = playerUpgrades[up.id];
+        const cost = Math.floor(up.baseCost * Math.pow(1.5, level));
+        const card = document.getElementById(`card-${up.id}`);
+        if (card) {
+          if (gameState.score < cost) {
+            card.classList.add('disabled');
+          } else {
+            card.classList.remove('disabled');
+          }
+        }
+      });
+    }
+
+    // Логика смены Влада (Эволюция)
+    let currentAvatarPhase = 0;
+    function checkAvatarEvolution() {
+      let phase = 1;
+      let src = 'vlad1.jpg'; // Лысый Влад (от 0 до 100 000)
+      let title = 'Ур. 1: Лысый Влад';
+
+      if (gameState.score >= 100001 && gameState.score <= 1000000) {
+        phase = 2;
+        src = 'vlad2.jpg'; // Базовый Влад (от 100 001 до 1 000 000)
+        title = 'Ур. 2: Базовый Влад';
+      } else if (gameState.score > 1000000) {
+        phase = 3;
+        src = 'vlad3.jpg'; // Крутой Влад (от 1 000 001 и выше)
+        title = 'Ур. 3: Крутой Влад!!';
+      }
+
+      if (currentAvatarPhase !== phase) {
+        currentAvatarPhase = phase;
+        vladImg.src = src;
+        // Задаем картинку для размытого фона
+        bgBlurEl.style.backgroundImage = `url(${src})`;
+        levelTitleEl.innerText = title;
+      }
+    }
+
+    function formatNumber(num) {
+      if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
+      if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
+      return Math.floor(num).toLocaleString('ru-RU');
+    }
+
+    function updateUI() {
+      scoreEl.innerText = formatNumber(gameState.score);
+      statClickEl.innerText = formatNumber(gameState.clickPower);
+      statAutoEl.innerText = formatNumber(gameState.autoIncome);
+      
+      const energyPercent = (gameState.energy / gameState.maxEnergy) * 100;
+      energyFillEl.style.width = `${energyPercent}%`;
+      energyTextEl.innerText = `${Math.floor(gameState.energy)} / ${gameState.maxEnergy}`;
+
+      if (gameState.energy < 1) {
+        vladImg.classList.add('no-energy');
+      } else {
+        vladImg.classList.remove('no-energy');
+      }
+
+      checkAvatarEvolution();
+      checkShopButtons();
+    }
+
+    // КЛИК ПО ВЛАДУ
+    vladImg.addEventListener('pointerdown', (e) => {
+      if (gameState.energy >= 1) {
+        gameState.energy -= 1;
+        gameState.score += gameState.clickPower;
+        spawnText(e.clientX, e.clientY, `+${formatNumber(gameState.clickPower)}`);
+      } else {
+        spawnText(e.clientX, e.clientY, "Нет энергии!", true);
+      }
       updateUI();
-      spawnFloatingText(e.clientX, e.clientY, `+${clickPower}`);
     });
 
-    function spawnFloatingText(x, y, text) {
+    function spawnText(x, y, text, isError = false) {
       const el = document.createElement('div');
-      el.className = 'floating-text';
+      el.className = `floating-text ${isError ? 'error' : ''}`;
       el.innerText = text;
 
       const rect = tapArea.getBoundingClientRect();
-      el.style.left = `${x - rect.left}px`;
+      // Рандомный разброс всплывающего текста
+      const offsetX = (Math.random() - 0.5) * 40;
+      el.style.left = `${x - rect.left + offsetX}px`;
       el.style.top = `${y - rect.top}px`;
 
       tapArea.appendChild(el);
-      setTimeout(() => el.remove(), 700);
+      setTimeout(() => el.remove(), 800);
     }
 
-    // Прокачка клика
-    function buyClickUpgrade() {
-      if (score >= clickCost) {
-        score -= clickCost;
-        clickPower += 1;
-        clickCost = Math.round(clickCost * 1.5);
-        document.getElementById('click-cost').innerText = `${clickCost} 🪙`;
-        updateUI();
-      }
-    }
-
-    // Автокликеры
-    function buyAutoClicker(id, baseCost, income) {
-      if (score >= botCosts[id]) {
-        score -= botCosts[id];
-        autoIncome += income;
-        botCosts[id] = Math.round(botCosts[id] * 1.4);
-        document.getElementById(`bot${id}-cost`).innerText = `${botCosts[id]} 🪙`;
-        updateUI();
-      }
-    }
-
-    // Автофарм каждую секунду
+    // Игровой цикл: Восстановление энергии и Авто-фарм (10 раз в секунду для плавности)
     setInterval(() => {
-      if (autoIncome > 0) {
-        score += autoIncome;
-        updateUI();
+      // Реген энергии
+      if (gameState.energy < gameState.maxEnergy) {
+        gameState.energy += gameState.energyRegen / 10;
+        if (gameState.energy > gameState.maxEnergy) gameState.energy = gameState.maxEnergy;
       }
-    }, 1000);
+      
+      // Авто-фарм
+      if (gameState.autoIncome > 0) {
+        gameState.score += gameState.autoIncome / 10;
+      }
+      
+      updateUI();
+    }, 100);
 
-    function updateUI() {
-      scoreEl.innerText = score;
-      perClickEl.innerText = clickPower;
-      autoRateEl.innerText = autoIncome;
-
-      // Блокировка кнопок при нехватке монет
-      document.getElementById('btn-click-up').disabled = score < clickCost;
-      document.getElementById('btn-bot-1').disabled = score < botCosts[1];
-      document.getElementById('btn-bot-2').disabled = score < botCosts[2];
-      document.getElementById('btn-bot-3').disabled = score < botCosts[3];
-    }
-
+    // Запуск игры
+    // При старте устанавливаем фон под первую картинку вручную
+    bgBlurEl.style.backgroundImage = `url(vlad1.jpg)`;
+    initShop();
     updateUI();
   </script>
 </body>
